@@ -10,7 +10,7 @@
     >
       <div class="title-container">
         <h3 class="title">
-          <img src="@/assets/login-logo.png" alt="" />
+          <img src="@/assets/common/login-logo.png" alt="" />
         </h3>
       </div>
 
@@ -21,7 +21,7 @@
         <el-input
           ref="username"
           v-model="loginForm.mobile"
-          placeholder="手机号"
+          placeholder="请输入手机号"
           name="mobile"
           type="text"
           tabindex="1"
@@ -38,7 +38,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="密码"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -52,14 +52,13 @@
       </el-form-item>
 
       <el-button
+        class="loginBtn"
         :loading="loading"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
-        class="loginBtn"
         @click.native.prevent="handleLogin"
-        >Login</el-button
+        >登录</el-button
       >
-
       <div class="tips">
         <span style="margin-right: 20px">账号: 13800000002</span>
         <span> 密码: 123456</span>
@@ -69,12 +68,24 @@
 </template>
 
 <script>
-import { valiMobile } from '@/utils/validate'
+import { validMobile } from '@/utils/validate'
+
 export default {
   name: 'Login',
   data () {
     const validateMobile = (rule, value, callback) => {
-      valiMobile(value) ? callback() : callback(new Error('手机号格式不正确'))
+      if (!validMobile(value)) {
+        callback(new Error('手机号格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('The password can not be less than 6 digits'))
+      } else {
+        callback()
+      }
     }
     return {
       loginForm: {
@@ -82,14 +93,10 @@ export default {
         password: '123456'
       },
       loginRules: {
-        mobile: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { validator: validateMobile, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '密码不能为空', trigger: 'blur' },
-          { min: 6, max: 16, message: '长度在6-16之间', trigger: 'blur' }
-        ]
+        mobile: [{ required: true, trigger: 'blur', message: '手机号不能为空' },
+        { validator: validateMobile, trigger: 'blur' }],
+        password: [{ required: true, trigger: 'blur', message: '密码不能为空' },
+        { min: 6, max: 16, message: '密码长度6-16位之间', trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
@@ -140,7 +147,7 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg: #283443;
-$light_gray: #68b0fe;
+$light_gray: #68b0fe; // 将输入框颜色改成蓝色
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -179,6 +186,9 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
+  .el-form-item__error {
+    color: #fff;
+  }
   .loginBtn {
     background: #407ffe;
     height: 64px;
@@ -191,7 +201,7 @@ $cursor: #fff;
 <style lang="scss" scoped>
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
-$light_gray: #fff; // 将输入框颜色改成蓝色;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -251,7 +261,7 @@ $light_gray: #fff; // 将输入框颜色改成蓝色;
   }
 }
 .login-container {
-  background-image: url("~@/assets/login.jpg");
-  background-position: center;
+  background-image: url("~@/assets/common/login.jpg"); // 设置背景图片
+  background-position: center; // 将图片位置设置为充满整个屏幕
 }
 </style>
